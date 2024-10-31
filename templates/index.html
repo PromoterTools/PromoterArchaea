@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archaea Promoter Prediction</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            display: flex;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        /* Sidebar styling */
+        .sidebar {
+            width: 250px;
+            background-color: #2a8cba; /* Darker blue */
+            color: white;
+            height: 100vh;
+            padding: 30px;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-right: 4px solid #1a5f7a; /* Border for sidebar */
+        }
+        .sidebar h2 {
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        .sidebar .menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar .menu li {
+            margin: 20px 0;
+        }
+        .sidebar .menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .sidebar .menu a:hover {
+            color: #c2e0f3; /* Light blue on hover */
+        }
+        /* Main content styling */
+        .main-content {
+            margin-left: 270px; /* Space for sidebar */
+            padding: 20px;
+            width: 100%;
+            max-width: 1000px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2a8cba; /* Darker blue */
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        textarea, input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        textarea:focus, input[type="file"]:focus {
+            border-color: #2a8cba; /* Highlight on focus */
+            outline: none;
+        }
+        .btn {
+            background-color: #2a8cba;
+            color: #ffffff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background-color: #1a5f7a;
+            transform: scale(1.05); /* Scale effect on hover */
+        }
+        .reset-btn {
+            background-color: #d32f2f; /* Red */
+            margin-top: 20px;
+        }
+        .reset-btn:hover {
+            background-color: #b71c1c;
+        }
+        .result {
+            font-size: 1em;
+            color: #333;
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            text-align: left;
+            line-height: 1.6em;
+            border-left: 5px solid #2a8cba; /* Left border for results */
+        }
+        .result-item {
+            margin-bottom: 1.5em;
+        }
+        .promoter {
+            background-color: #c8e6c9;
+            color: #2e7d32;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .non-promoter {
+            background-color: #ffcdd2;
+            color: #c62828;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        /* Chart styling */
+        .chart-container {
+            position: relative;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            height: 400px; /* Set a height for the chart */
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>DNA Prediction</h2>
+    <ul class="menu">
+        <li><a href="/">Home</a></li>
+        <li><a href="#results">Prediction Results</a></li>
+        <li><a href="/" class="reset-btn btn">Reset</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <div class="container">
+        <h1>Archaea Promoter Prediction</h1>
+        <form action="/predict" method="post" enctype="multipart/form-data">
+            <label for="sequence">Enter DNA Sequence (or upload a file):</label>
+            <textarea name="sequence" rows="4" placeholder="Enter sequence here..."></textarea>
+
+            <label for="file">Or upload a file (.txt) with DNA sequences:</label>
+            <input type="file" name="file" accept=".txt">
+
+            <input type="submit" value="Predict" class="btn">
+        </form>
+
+        {% if results is defined %}
+            <div class="result" id="results">
+                <h2>Prediction Results:</h2>
+                {% for seq, result in results %}
+                    <div class="result-item">
+                        <p><strong>Sequence:</strong> {{ seq }}</p>
+                        <p><strong>Prediction:</strong> 
+                            <span class="{% if result == 'Promoter' %}promoter{% else %}non-promoter{% endif %}">{{ result }}</span>
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="predictionChart"></canvas>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Ensure counts are defined before using
+    const promoters = {{ promoters_count | tojson if promoters_count is defined else 0 }};
+    const nonPromoters = {{ non_promoters_count | tojson if non_promoters_count is defined else 0 }};
+    
+    const ctx = document.getElementById('predictionChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Promoters', 'Non-Promoters'],
+            datasets: [{
+                label: 'Number of Predictions',
+                data: [promoters, nonPromoters],
+                backgroundColor: [
+                    'rgba(40, 140, 186, 0.5)',
+                    'rgba(255, 205, 210, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(40, 140, 186, 1)',
+                    'rgba(255, 82, 82, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+</script>
+
+</body>
+</html>
