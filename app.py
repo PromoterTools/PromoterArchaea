@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Oct 28 14:07:18 2024
-
-@author: Lab
-"""
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from flask import Flask, request, render_template
@@ -86,10 +80,14 @@ k=6
 input_shape = (4**k, 1)
 model_weights_path = '31oct_CNN_model.weights.h5'
     
+from tensorflow.keras.models import load_model
+
+model = load_model('31oct_CNN_model.h5', compile=False)
+model.compile(optimizer='adam')
 # Load model and weights
 model = get_model(input_shape)
 #model = load_model('model/30Octmdoel.h5', compile=False)
-model.compile(optimizer='adam')
+#model.compile(optimizer='adam')
 model.load_weights(model_weights_path)
 
 
