@@ -45,7 +45,7 @@ scipy==1.13.1
 six==1.16.0
 tensorboard
 tensorboard-data-server
-tensorflow
+tensorflow==2.13.0
 tensorflow-estimator
 tensorflow-intel
 tensorflow-io-gcs-filesystem
