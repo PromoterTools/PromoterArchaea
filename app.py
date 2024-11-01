@@ -37,8 +37,7 @@ def read_sequences(file_path, sequence_length):
 # Function to build the CNN model
 def get_model(input_shape):
     inputs = Input(shape=input_shape)
-      # Add Gaussian noise with standard deviation 0.1
-    convLayer = Conv1D(filters=8, kernel_size=2, activation='relu', kernel_regularizer=regularizers.l2(1e-5))(inputs)#(noisy_inputs)
+    convLayer = Conv1D(filters=8, kernel_size=2, activation='relu', kernel_regularizer=regularizers.l2(1e-5))(inputs)
     poolingLayer1 = MaxPooling1D(pool_size=2, strides=2)(convLayer)
     convLayer2 = Conv1D(filters=16, kernel_size=2, activation='relu', kernel_regularizer=regularizers.l2(1e-5))(poolingLayer1)
     poolingLayer2 = MaxPooling1D(pool_size=4, strides=2)(convLayer2)
@@ -84,18 +83,18 @@ def predict_promoter(sequence, model, k):
 sequence_length = 100
 k=6
 input_shape = (4**k, 1)
-model_weights_path = '31oct_CNN_model.weights.h5'
+model_weights_path = 'D:/Archea Models/CNn_model_1st_nov.weights.h5'
     
 from tensorflow.keras.models import load_model
 
-model = load_model('31oct_CNN_model.h5', compile=False)
-
+model = load_model('D:/Archea Models/keras_CNn_model_1st_nov.keras', compile=False)
+model.compile(optimizer='adam')
 # Load model and weights
 model = get_model(input_shape)
 #model = load_model('model/30Octmdoel.h5', compile=False)
 #model.compile(optimizer='adam')
 model.load_weights(model_weights_path)
-model.compile(optimizer='adam')
+
 
 @app.route('/')
 def home():
