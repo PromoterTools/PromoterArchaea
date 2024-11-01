@@ -83,11 +83,11 @@ def predict_promoter(sequence, model, k):
 sequence_length = 100
 k=6
 input_shape = (4**k, 1)
-model_weights_path = 'D:/Archea Models/CNn_model_1st_nov.weights.h5'
+model_weights_path = 'CNn_model_1st_nov.weights.h5'
     
 from tensorflow.keras.models import load_model
 
-model = load_model('D:/Archea Models/keras_CNn_model_1st_nov.keras', compile=False)
+model = load_model('keras_CNn_model_1st_nov.keras', compile=False)
 model.compile(optimizer='adam')
 # Load model and weights
 model = get_model(input_shape)
