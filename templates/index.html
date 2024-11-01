@@ -6,122 +6,87 @@
     <title>Archaea Promoter Prediction</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* General Styling */
         body {
-            display: flex;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
-            background-color: #f0f4f8;
+            background-color: #f5f7fa;
             color: #333;
         }
-        /* Sidebar styling */
-        .sidebar {
-            width: 250px;
-            background-color: #2a8cba; /* Darker blue */
-            color: white;
-            height: 100vh;
-            padding: 30px;
-            box-sizing: border-box;
-            position: fixed;
-            top: 0;
-            left: 0;
-            border-right: 4px solid #1a5f7a; /* Border for sidebar */
+        h1, h2, label {
+            color: #34495e;
         }
-        .sidebar h2 {
+
+        /* Header */
+        .header {
+            background-color: #2980b9;
+            padding: 1rem;
+            color: #fff;
             text-align: center;
-            font-size: 1.8em;
-            margin-bottom: 30px;
-            letter-spacing: 1px;
+            font-size: 1.5rem;
         }
-        .sidebar .menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .sidebar .menu li {
-            margin: 20px 0;
-        }
-        .sidebar .menu a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-        .sidebar .menu a:hover {
-            color: #c2e0f3; /* Light blue on hover */
-        }
-        /* Main content styling */
-        .main-content {
-            margin-left: 270px; /* Space for sidebar */
-            padding: 20px;
-            width: 100%;
+
+        /* Container */
+        .container {
             max-width: 1000px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: auto;
+            padding: 20px;
         }
-        h1 {
-            color: #2a8cba; /* Darker blue */
-            font-size: 2em;
+
+        /* Guidelines Section */
+        .guidelines {
+            background-color: #eaf2f8;
+            padding: 15px;
+            border-radius: 5px;
             margin-bottom: 20px;
         }
-        label {
-            font-weight: bold;
-            color: #333;
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.1em;
+
+        /* Form Section */
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         textarea, input[type="file"] {
             width: 100%;
-            padding: 12px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 1em;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #dcdfe3;
             margin-bottom: 15px;
-            transition: border-color 0.3s;
-        }
-        textarea:focus, input[type="file"]:focus {
-            border-color: #2a8cba; /* Highlight on focus */
-            outline: none;
+            font-size: 1em;
         }
         .btn {
-            background-color: #2a8cba;
-            color: #ffffff;
-            padding: 12px 20px;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 15px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1.1em;
-            transition: background-color 0.3s, transform 0.3s;
-            margin-top: 10px;
+            font-size: 1em;
         }
         .btn:hover {
-            background-color: #1a5f7a;
-            transform: scale(1.05); /* Scale effect on hover */
+            background-color: #2980b9;
         }
         .reset-btn {
-            background-color: #d32f2f; /* Red */
-            margin-top: 20px;
+            background-color: #e74c3c;
+            margin-left: 10px;
         }
         .reset-btn:hover {
-            background-color: #b71c1c;
+            background-color: #c0392b;
         }
+
+        /* Results Section */
         .result {
-            font-size: 1em;
-            color: #333;
-            margin-top: 30px;
+            margin-top: 20px;
             padding: 15px;
             background-color: #f9f9f9;
             border-radius: 5px;
-            width: 100%;
-            max-width: 100%;
-            overflow-wrap: break-word;
-            text-align: left;
-            line-height: 1.6em;
-            border-left: 5px solid #2a8cba; /* Left border for results */
+            border-left: 5px solid #3498db;
+            word-wrap: break-word;
         }
         .result-item {
-            margin-bottom: 1.5em;
+            margin-bottom: 17px;
         }
         .promoter {
             background-color: #c8e6c9;
@@ -129,7 +94,6 @@
             padding: 4px 8px;
             border-radius: 3px;
             font-weight: bold;
-            display: inline-block;
         }
         .non-promoter {
             background-color: #ffcdd2;
@@ -137,93 +101,132 @@
             padding: 4px 8px;
             border-radius: 3px;
             font-weight: bold;
-            display: inline-block;
         }
-        /* Chart styling */
+        .sequence-text {
+            display: block;
+            background-color: #f4f6f9;
+            padding: 12px;
+            border-radius: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 5px;
+            font-family: monospace;
+        }
+
+        /* Chart */
         .chart-container {
             position: relative;
             margin-top: 30px;
-            margin-bottom: 30px;
-            height: 400px; /* Set a height for the chart */
+            height: 350px;
+        }
+
+        /* Info Section */
+        .info {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <h2>DNA Prediction</h2>
-    <ul class="menu">
-        <li><a href="/">Home</a></li>
-        <li><a href="#results">Prediction Results</a></li>
-        <li><a href="/" class="reset-btn btn">Reset</a></li>
-    </ul>
-</div>
+<div class="header">Archaea Promoter Prediction</div>
 
-<div class="main-content">
-    <div class="container">
-        <h1>Archaea Promoter Prediction</h1>
-        <form action="/predict" method="post" enctype="multipart/form-data">
-            <label for="sequence">Enter DNA Sequence (or upload a file):</label>
-            <textarea name="sequence" rows="4" placeholder="Enter sequence here..."></textarea>
-
-            <label for="file">Or upload a file (.txt) with DNA sequences:</label>
-            <input type="file" name="file" accept=".txt">
-
-            <input type="submit" value="Predict" class="btn">
-        </form>
-
-        {% if results is defined %}
-            <div class="result" id="results">
-                <h2>Prediction Results:</h2>
-                {% for seq, result in results %}
-                    <div class="result-item">
-                        <p><strong>Sequence:</strong> {{ seq }}</p>
-                        <p><strong>Prediction:</strong> 
-                            <span class="{% if result == 'Promoter' %}promoter{% else %}non-promoter{% endif %}">{{ result }}</span>
-                        </p>
-                    </div>
-                {% endfor %}
-            </div>
-            
-            <div class="chart-container">
-                <canvas id="predictionChart"></canvas>
-            </div>
-        {% endif %}
+<div class="container">
+    <div class="guidelines">
+        <h2>Guidelines</h2>
+        <p>This tool helps predict if DNA sequences are promoters in Archaea. You can input data in two ways:</p>
+        <ul>
+            <li>Paste a DNA sequence in the text box below.</li>
+            <li>Upload a text file containing sequences (.txt).</li>
+            <li>Sequence length can be between 81bp to 100bp.</li>
+        </ul>
+        <p>Click "Predict" for results & Click "Reset" if you want to evaluate again.</p>
     </div>
+
+    <form action="/predict" method="post" enctype="multipart/form-data">
+        <label for="sequence">Enter DNA Sequence (or upload a file):</label>
+        <textarea name="sequence" rows="4" placeholder="Enter sequence here..."></textarea>
+
+        <label for="file">Or upload a file (.txt) with DNA sequences:</label>
+        <input type="file" name="file" accept=".txt">
+
+        <input type="submit" value="Predict" class="btn">
+        <button type="button" onclick="resetForm()" class="btn reset-btn">Reset</button>
+    </form>
+
+    {% if total_sequences is defined %}
+        <div class="info">
+            <strong>Total Sequences Processed:</strong> {{ total_sequences }}
+        </div>
+    {% endif %}
+
+    {% if results is defined %}
+        <div class="result" id="results">
+            <h2>Prediction Results</h2>
+            {% for seq, result in results %}
+                <div class="result-item">
+                    <p><strong>Sequence:</strong> <span class="sequence-text">{{ seq }}</span></p>
+                    <p><strong>Prediction:</strong> 
+                        <span class="{% if result == 'Promoter' %}promoter{% else %}non-promoter{% endif %}">{{ result }}</span>
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Prediction Summary Heading -->
+        <div class="info">
+            <h3>Model Prediction Summary</h3>
+            <p>Out of {{ total_sequences }} query sequences, the model predicted {{ promoters_count }} as Promoters and {{ non_promoters_count }} as Non-Promoters.</p>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="predictionChart"></canvas>
+        </div>
+    {% endif %}
 </div>
 
 <script>
-    // Ensure counts are defined before using
+    // Reset form function
+    function resetForm() {
+        document.querySelector('textarea[name="sequence"]').value = '';
+        document.querySelector('input[type="file"]').value = '';
+        document.getElementById('results')?.remove();
+        document.querySelector('.info')?.remove();
+    }
+
+    // Chart.js code for displaying promoter and non-promoter counts with percentages
     const promoters = {{ promoters_count | tojson if promoters_count is defined else 0 }};
     const nonPromoters = {{ non_promoters_count | tojson if non_promoters_count is defined else 0 }};
-    
+    const total = promoters + nonPromoters;
+    const promoterPercentage = ((promoters / total) * 100).toFixed(2);
+    const nonPromoterPercentage = ((nonPromoters / total) * 100).toFixed(2);
+
     const ctx = document.getElementById('predictionChart').getContext('2d');
     const myChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'pie',
         data: {
-            labels: ['Promoters', 'Non-Promoters'],
+            labels: [
+                `Promoters (${promoterPercentage}%)`,
+                `Non-Promoters (${nonPromoterPercentage}%)`
+            ],
             datasets: [{
-                label: 'Number of Predictions',
+                label: 'Prediction Counts',
                 data: [promoters, nonPromoters],
-                backgroundColor: [
-                    'rgba(40, 140, 186, 0.5)',
-                    'rgba(255, 205, 210, 0.5)'
-                ],
-                borderColor: [
-                    'rgba(40, 140, 186, 1)',
-                    'rgba(255, 82, 82, 1)'
-                ],
-                borderWidth: 1
+                backgroundColor: ['#2ecc71', '#e74c3c'],
+                hoverOffset: 4
             }]
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
             responsive: true,
-            maintainAspectRatio: false
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+            },
         }
     });
 </script>
