@@ -87,8 +87,8 @@ model_weights_path = 'CNn_model_1st_nov.weights.h5'
     
 from tensorflow.keras.models import load_model
 
-model = load_model('keras_CNn_model_1st_nov.keras', compile=False)
-model.compile(optimizer='adam')
+#model = load_model('keras_CNn_model_1st_nov.keras', compile=False)
+#model.compile(optimizer='adam')
 # Load model and weights
 model = get_model(input_shape)
 #model = load_model('model/30Octmdoel.h5', compile=False)
